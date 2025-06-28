@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@prisma/extension-accelerate": "^1.2.1",
+    "@vis.gl/react-google-maps": "^1.5.3",
     "bcryptjs": "^3.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.503.0",
