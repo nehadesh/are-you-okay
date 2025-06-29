@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const reply = completion.choices[0].message?.content ?? "Sorry, no reply.";
 
     return NextResponse.json({ reply });
-  } catch (error: any) {
+  } catch (error) {
     console.error("OpenAI API error:", error);
     return NextResponse.json({ error: "Failed to get response from OpenAI" }, { status: 500 });
   }
