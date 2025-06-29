@@ -16,7 +16,7 @@ interface AlertProperties {
 interface AlertResponse { features: AlertFeature[]; }
 
 export async function getAlerts(): Promise<AlertFeature[]> {
-  return fetch("https://api.weather.gov/alerts?limit=20").then((response) => {
+  return fetch("https://api.weather.gov/alerts?limit=100").then((response) => {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -30,8 +30,7 @@ export async function getAlerts(): Promise<AlertFeature[]> {
         areaDesc: feature.properties.areaDesc
       }
     }));
-    console.log(JSON.stringify(alerts, null, 2));
-    return alerts;
+    return alerts.filter((alert) => alert.geometry !== null && alert.geometry.coordinates.length > 0 && alert.properties.severity !== "Unknown");
   });;
 }
 
@@ -104,20 +103,22 @@ function ActivityFeed ({alerts}: {alerts: AlertFeature[]}) {
                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
             </svg>
         </span>
-        <h3 className="mb-1 text-lg font-semibold text-gray-900" >{alert.location}</h3>
-        <time className="block mb-2 text-sm font-normal leading-none text-gray-400">{alert.date}</time>
+        <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white" >{alert.location}</h3>
+        <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{alert.date}</time>
+        <div className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
             {alert.details ? (
               <>
               <div className="mt-4 text-gray-700">
                 <p className="mb-4 text-base font-normal text-gray-500 font-medium">⚠️ {alert.details.event}</p>
                 </div>
-                <a onClick={() => { console.log("CLICKED"); if (alert.center) {map?.setCenter(alert.center); map?.setZoom(10);} }} className="inline-flex items-center mt-2 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">Learn more <svg className="w-3 h-3 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" cap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                <a onClick={() => { if (alert.center) {map?.setCenter(alert.center); map?.setZoom(10);} }} className="inline-flex items-center mt-2 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">View on map<svg className="w-3 h-3 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                 </svg></a>
                 </>
                 ) : (
                 <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400 text-sm italic text-gray-400 mt-2">No active alerts</p>
                 )}
+          </div>
     </li>
       </ol>
     ))}
