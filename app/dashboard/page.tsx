@@ -349,11 +349,10 @@ export default function DashboardPage() {
       <ActivitySidebar alerts={savedAlerts} />
       {isAddAlertOpen && <AddAlertPanel onClose={() => setIsAddAlertOpen(false)} setSavedAlerts={setSavedLocations}/>}
         {isBottomPanelOpen && (
-  <AddAlertPanelBottom
-    onClose={() => setIsBottomPanelOpen(false)}
-    setSavedAlerts={setSavedLocations}
-  />
-)}
+        <AddAlertPanelBottom
+          onClose={() => setIsBottomPanelOpen(false)}
+        />
+      )}
 
       <Map
         style={{ width: "100%", height: "100%" }}
