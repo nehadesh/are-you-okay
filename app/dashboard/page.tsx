@@ -46,17 +46,6 @@ function AddAlertButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-function AddAlertButtonBottom({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="absolute bottom-4 right-4 z-50 rounded-full bg-white p-2 shadow-md hover:bg-gray-100"
-    >
-      <FiPlusCircle className="h-6 w-6 text-black" />
-    </button>
-  );
-}
-
 function AddAlertPanelBottom({
   onClose,
 }: {
