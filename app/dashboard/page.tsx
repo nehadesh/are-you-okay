@@ -273,7 +273,6 @@ export default function DashboardPage() {
           <div key={alert.id}>
             <Marker
               position={alert.coordinates}
-              icon={""} 
               onClick={() => { 
                 map?.setCenter(alert.coordinates); 
                 map?.setZoom(15); 

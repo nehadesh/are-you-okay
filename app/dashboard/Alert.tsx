@@ -16,7 +16,7 @@ interface AlertProperties {
 interface AlertResponse { features: AlertFeature[]; }
 
 export async function getAlerts(): Promise<AlertFeature[]> {
-  return fetch("https://api.weather.gov/alerts?limit=20").then((response) => {
+  return fetch("https://api.weather.gov/alerts?limit=100").then((response) => {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -30,8 +30,7 @@ export async function getAlerts(): Promise<AlertFeature[]> {
         areaDesc: feature.properties.areaDesc
       }
     }));
-    console.log(JSON.stringify(alerts, null, 2));
-    return alerts;
+    return alerts.filter((alert) => alert.geometry !== null && alert.geometry.coordinates.length > 0 && alert.properties.severity !== "Unknown");
   });;
 }
 
@@ -106,7 +105,7 @@ function ActivityFeed ({alerts}: {alerts: AlertFeature[]}) {
         </span>
         <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white" >{alert.location}</h3>
         <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{alert.date}</time>
-        <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+        <div className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
             {alert.details ? (
               <>
               <div className="mt-4 text-gray-700 dark:text-gray-300">
@@ -119,7 +118,7 @@ function ActivityFeed ({alerts}: {alerts: AlertFeature[]}) {
                 ) : (
                 <p className="text-sm italic text-gray-400 mt-2">No active alerts</p>
                 )}
-          </p>
+          </div>
     </li>
       </ol>
     ))}
