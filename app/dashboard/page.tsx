@@ -2,37 +2,7 @@
 import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Map, Marker, useMap } from "@vis.gl/react-google-maps";
 import ActivityFeed, { AlertFeature, getAlerts } from "./Alert";
-import Tooltip from "./Tooltip";
 import { FiPlusCircle, FiX, FiMenu } from "react-icons/fi";
-
-// /* =========================
-//    PolygonOverlay Component
-// ========================= */
-// function PolygonOverlay({ paths }: { paths: { lat: number; lng: number }[] }) {
-//   const map = useMap();
-
-//   useEffect(() => {
-//     if (!map) return;
-
-//     const polygon = new google.maps.Polygon({
-//       paths,
-//       strokeColor: "#FF0000",
-//       strokeOpacity: 0.8,
-//       strokeWeight: 2,
-//       fillColor: "#FF0000",
-//       fillOpacity: 0.35,
-//       geodesic: true,
-//     });
-
-//     polygon.setMap(map);
-
-//     return () => {
-//       polygon.setMap(null);
-//     };
-//   }, [map, paths]);
-
-//   return null;
-// }
 
 /* =========================
    ActivitySidebar Component
@@ -195,7 +165,7 @@ function AddAlertPanel({ onClose, setSavedAlerts }: { onClose: () => void; setSa
           }}
           className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
-          Add Alert
+          Add Watch Location
         </button>
       </div>
     </div>
@@ -227,7 +197,6 @@ async function getZone(coordinates: { lat: number; lng: number }): Promise<strin
    DashboardPage Component
 ========================= */
 export default function DashboardPage() {
-  const [activeMarkerId, setActiveMarkerId] = useState<number | null>(null);
   const [isAddAlertOpen, setIsAddAlertOpen] = useState(false);
   const map = useMap();
   const [savedLocations, setSavedLocations] = useState<Alert[]>([]);
@@ -266,27 +235,6 @@ export default function DashboardPage() {
     })
   }, [savedAlerts, map])
 
-  const locationData = [
-    {
-      id: 1,
-      position: { lat: 47.6101, lng: -122.3344 },
-      title: "Seattle, WA",
-      content: "This is Seattle.",
-    },
-    {
-      id: 2,
-      position: { lat: 34.0522, lng: -118.2437 },
-      title: "Los Angeles, CA",
-      content: "This is Los Angeles.",
-    },
-    {
-      id: 3,
-      position: { lat: 40.7128, lng: -74.006 },
-      title: "New York, NY",
-      content: "This is New York.",
-    },
-  ];
-
   useEffect(() => {
     if (savedLocations.length > 0 && map) {
       const recentAlert = savedLocations[savedLocations.length - 1];
@@ -320,20 +268,6 @@ export default function DashboardPage() {
         gestureHandling={"greedy"}
         disableDefaultUI={true}
       >
-        {locationData.map((location) => (
-          <div key={location.id}>
-            <Marker
-              position={location.position}
-              onClick={() => setActiveMarkerId(location.id)}
-            />
-            {activeMarkerId === location.id && (
-              <Tooltip
-                location={location}
-                setActiveMarkerId={setActiveMarkerId}
-              />
-            )}
-          </div>
-        ))}
 
         {savedLocations.map((alert) => (
           <div key={alert.id}>
@@ -349,14 +283,4 @@ export default function DashboardPage() {
       </Map>
     </div>
   );
-}
-
-function generatePolygonAroundCoordinates(coordinates: { lat: number; lng: number }) {
-  const radius = 0.01; // Adjust this value to change the size of the polygon
-  return [
-    { lat: coordinates.lat + radius, lng: coordinates.lng + radius },
-    { lat: coordinates.lat + radius, lng: coordinates.lng - radius },
-    { lat: coordinates.lat - radius, lng: coordinates.lng - radius },
-    { lat: coordinates.lat - radius, lng: coordinates.lng + radius },
-  ];
 }
