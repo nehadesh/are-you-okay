@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Map, Marker, useMap } from "@vis.gl/react-google-maps";
 import ActivityFeed, { AlertFeature, getAlerts } from "./Alert";
 import Tooltip from "./Tooltip";
-import { FiPlusCircle, FiX, FiMenu } from "react-icons/fi";
+import { FiPlusCircle, FiX, FiMenu, FiMessageSquare } from "react-icons/fi";
 
 // /* =========================
 //    PolygonOverlay Component
@@ -76,6 +76,103 @@ function AddAlertButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+function AddAlertButtonBottom({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="absolute bottom-4 right-4 z-50 rounded-full bg-white p-2 shadow-md hover:bg-gray-100"
+    >
+      <FiPlusCircle className="h-6 w-6 text-black" />
+    </button>
+  );
+}
+
+function AddAlertPanelBottom({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
+  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+  const [input, setInput] = useState("");
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, userMessage]);
+
+    setInput("");
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userMessage.text }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error from API:", response.status, errorText);
+      throw new Error("API request failed");
+    }
+
+    const data = await response.json();
+
+    const botMessage = { sender: "bot", text: data.reply };
+    setMessages((prev) => [...prev, botMessage]);
+  };
+
+  return (
+    <div className="fixed bottom-8 right-4 z-50 w-full max-w-md bg-white shadow-xl border border-gray-200 rounded-lg flex flex-col">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-black">Chat Assistant</h2>
+        <button onClick={onClose} className="text-black hover:text-black">
+          <FiX className="h-5 w-5" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 max-h-[300px] text-sm space-y-2 text-black">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`p-2 rounded-md ${
+              msg.sender === "user" ? "bg-blue-100 self-end" : "bg-gray-100"
+            }`}
+          >
+            {msg.text}
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 border-t border-gray-200 flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="flex-1 border border-gray-300 rounded p-2 focus:outline-none text-black"
+          placeholder="Ask something..."
+        />
+        <button
+          onClick={sendMessage}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function OpenBottomPanelButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="absolute bottom-4 right-4 z-50 rounded-full bg-white p-2 shadow-md hover:bg-gray-100"
+    >
+      <FiMessageSquare className="h-6 w-6 text-black" />
+    </button>
+  );
+}
+
 type Alert = {
   id: number;
   name: string;
@@ -133,7 +230,7 @@ function AddAlertPanel({ onClose, setSavedAlerts }: { onClose: () => void; setSa
       "
     >
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold">Add Alert</h2>
+        <h2 className="text-lg font-semibold text-black">Add Alert</h2>
         <button
           onClick={onClose}
           className="text-black hover:text-black"
@@ -141,7 +238,7 @@ function AddAlertPanel({ onClose, setSavedAlerts }: { onClose: () => void; setSa
           <FiX className="h-5 w-5" />
         </button>
       </div>
-      <div className="p-4 flex flex-col gap-4 overflow-y-auto max-h-[80vh]">
+      <div className="p-4 flex flex-col gap-4 overflow-y-auto max-h-[80vh] text-black">
         <label className="text-sm font-medium">Name</label>
         <input
           type="text"
@@ -229,6 +326,7 @@ async function getZone(coordinates: { lat: number; lng: number }): Promise<strin
 export default function DashboardPage() {
   const [activeMarkerId, setActiveMarkerId] = useState<number | null>(null);
   const [isAddAlertOpen, setIsAddAlertOpen] = useState(false);
+  const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(false);
   const map = useMap();
   const [savedLocations, setSavedLocations] = useState<Alert[]>([]);
   const [savedAlerts, setSavedAlerts] = useState<AlertFeature[]>([]);
@@ -310,8 +408,15 @@ export default function DashboardPage() {
   return (
     <div className="relative h-screen w-full">
       <AddAlertButton onClick={() => setIsAddAlertOpen(true)} />
+        <OpenBottomPanelButton onClick={() => setIsBottomPanelOpen(true)} />
       <ActivitySidebar alerts={savedAlerts} />
       {isAddAlertOpen && <AddAlertPanel onClose={() => setIsAddAlertOpen(false)} setSavedAlerts={setSavedLocations}/>}
+        {isBottomPanelOpen && (
+  <AddAlertPanelBottom
+    onClose={() => setIsBottomPanelOpen(false)}
+    setSavedAlerts={setSavedLocations}
+  />
+)}
 
       <Map
         style={{ width: "100%", height: "100%" }}
