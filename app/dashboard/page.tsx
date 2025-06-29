@@ -47,9 +47,9 @@ function ActivitySidebar({ alerts }: { alerts: AlertFeature[] }) {
         className="mb-2 flex items-center justify-center rounded bg-white p-2 shadow-md hover:bg-gray-100"
       >
         {isFeedOpen ? (
-          <FiX className="h-5 w-5 text-gray-700" />
+          <FiX className="h-5 w-5 text-black" />
         ) : (
-          <FiMenu className="h-5 w-5 text-gray-700" />
+          <FiMenu className="h-5 w-5 text-black" />
         )}
       </button>
 
@@ -71,7 +71,7 @@ function AddAlertButton({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       className="absolute top-4 right-4 z-50 rounded-full bg-white p-2 shadow-md hover:bg-gray-100"
     >
-      <FiPlusCircle className="h-6 w-6 text-gray-700" />
+      <FiPlusCircle className="h-6 w-6 text-black" />
     </button>
   );
 }
@@ -136,7 +136,7 @@ function AddAlertPanel({ onClose, setSavedAlerts }: { onClose: () => void; setSa
         <h2 className="text-lg font-semibold">Add Alert</h2>
         <button
           onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-black hover:text-black"
         >
           <FiX className="h-5 w-5" />
         </button>
@@ -158,7 +158,7 @@ function AddAlertPanel({ onClose, setSavedAlerts }: { onClose: () => void; setSa
           placeholder="Address / Location"
         />
   
-        <div className="text-sm text-gray-700">
+        <div className="text-sm">
           {name && (
             <div>
               <strong>Name:</strong> {name}
@@ -193,7 +193,7 @@ function AddAlertPanel({ onClose, setSavedAlerts }: { onClose: () => void; setSa
               alert("Please select a valid place from suggestions.");
             }
           }}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="rounded bg-blue-600 px-4 py-2 hover:bg-blue-700"
         >
           Add Alert
         </button>
