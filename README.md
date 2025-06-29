@@ -1,16 +1,9 @@
-# Next.js & Prisma Postgres Auth Starter
+# Are you okay
 
-This repository provides a boilerplate to quickly set up a Next.js demo application with authentication using [NextAuth.js v4](https://next-auth.js.org/), [Prisma Postgres](https://www.prisma.io/postgres) and [Prisma ORM](https://www.prisma.io/orm), and deploy it to Vercel. It includes an easy setup process and example routes that demonstrate basic CRUD operations against the database.
+Access at: [are-you-okay.vercel.app/dashboard](https://are-you-okay.vercel.app/dashboard)
 
-## Features
 
-- Next.js 15 app with App Router, Server Actions & API Routes
-- Data modeling, database migrations, seeding & querying
-- Log in and sign up authentication flows
-- CRUD operations to create, view and delete blog posts
-- Pagination, filtering & relations queries
-
-## Getting started
+## Development: Getting started
 
 ### 1. Install dependencies
 
